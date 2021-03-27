@@ -48,15 +48,41 @@ class App extends Component{
 
     <FieldArray name = "friends"
       render = {arrayHelper => (
-      <div>{
+      <div>
+        <h3>Friends</h3>
+        {
         props.values.friends.map((_, index) => (
           <div key = {index}> <Field name = {`friends.${index}`}/> 
-          <button type = "button" onClick = {()=> arrayHelper.remove({index})}> Delete</button>
+          <button type = "button" onClick = {()=> arrayHelper.remove(index)}> Delete</button>
           <ErrorMessage name ={`friends.${index}`}/><br/>
           </div>
 
         ))}
          <button type = "button" onClick = {()=> arrayHelper.push("some thing")}> Add</button>
+      </div>)
+        }/>
+<br/>
+
+
+    <FieldArray name = "phoneNumbers"
+      render = {arrayHelper => (
+      <div>
+         <h3>phone Numbers</h3>
+        {
+        props.values.phoneNumbers.map((_, index) => (
+          <div key = {index}>
+            <Field name = {`phoneNumbers.${index}.number`} placeholder = 'number'/> 
+             <ErrorMessage name ={`phoneNumbers.${index}.number`}/><br/>
+
+            <Field name = {`phoneNumbers.${index}.extentsion`} placeholder = 'extentsion'/> 
+             <ErrorMessage name ={`phoneNumbers.${index}.extentsion`}/>
+
+          <button type = "button" onClick = {()=> arrayHelper.remove(index)}> Delete</button>
+          <br/><br/>
+          </div>
+
+        ))}
+         <button type = "button" onClick = {()=> arrayHelper.push({ number: '111', extentsion : '922263'})}> Add</button>
       </div>)
         }/>
 
@@ -67,6 +93,7 @@ class App extends Component{
   }
 
   schema = () => {
+
     const schema = Yup.object().shape({
       name : Yup.string().required(),
       email : Yup.string().required(),
@@ -74,11 +101,20 @@ class App extends Component{
       category : Yup.string().required(),
       social : Yup.object().shape({
         facebook :  Yup.string().required("Facebook is a required field"),
-        twitter :  Yup.string().required("Twitter is a required field"),
+        twitter  :  Yup.string().required("Twitter is a required field"),
       }),
+
       friends: Yup.array().of(
         Yup.string().required('required field')
-      )
+      ),
+
+      phoneNumbers: Yup.array().of(
+        Yup.object().shape({
+
+          number     :  Yup.number().typeError('should be a number').required("number is a required field"),
+          extentsion :  Yup.number().typeError('should be a number').required("extentsion is a required field"),
+        })
+      ),
 
     });
     return schema;
@@ -103,7 +139,17 @@ class App extends Component{
               facebook:'',
               twitter:'',
           },
-          friends: ['Rabee','Hussam']
+          friends: ['Rabee','Hussam'],
+          phoneNumbers : [
+            {
+              number: '123',
+              extentsion : '963'
+            },
+            {
+              number: '321',
+              extentsion : '43'
+            }
+          ]
         }}
           onSubmit = {this.onSubmit}
           validationSchema = {this.schema()} >
