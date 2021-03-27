@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
-import {Formik, Field} from 'formik';
+import {Formik, Field, ErrorMessage} from 'formik';
+import * as Yup from 'yup';
+
 class App extends Component{
 
 
@@ -11,27 +13,42 @@ class App extends Component{
     return <form onSubmit = {props.handleSubmit}>
 
     <label>Name : </label>
-    <Field name = "name"/><hr/>
+    <Field name = "name"/><br/>
+    <ErrorMessage name ="name"/><br/>
 
     <label>E-Mail : </label>
-    <Field name = "email" type="email"/><hr/>
+    <Field name = "email" type="email"/><br/>
+    <ErrorMessage name ="email"/><br/>
 
     <label>Select : </label>
-    <Field name = "type" component="select">
+    <Field name = "type" component="select"><br/>
         <option value = "1"> One</option>  
         <option value = "2"> Two</option>  
-    </Field><hr/>
+    </Field><br/>
+    <ErrorMessage name ="type"/><br/>
 
     <label>Checkbox : </label>
-    <Field name = "active" type="checkbox"/><hr/>
+    <Field name = "active" type="checkbox"/><br/><br/>
 
 
     <label>Radio : </label>
     <Field name = "category" type="radio" value = '1'/>
-    <Field name = "category" type="radio" value = '2'/><hr/>
+    <Field name = "category" type="radio" value = '2'/><br/>
+    <ErrorMessage name ="category"/><br/>
 
       <button type = "submit"> Send</button>
     </form>
+  }
+
+  schema = () => {
+    const schema = Yup.object().shape({
+      name : Yup.string().required(),
+      email : Yup.string().required(),
+      type : Yup.string().required(),
+      category : Yup.string().required()
+
+    });
+    return schema;
   }
 
 
@@ -42,7 +59,9 @@ class App extends Component{
       
       <div>
 
-          <Formik initialValues = {{name: "", email: "",type: "", active:false, category:'1'}}onSubmit = {this.onSubmit} >
+          <Formik initialValues = {{name: "", email: "",type: "", active:false, category:'1'}}onSubmit = {this.onSubmit} validationSchema = {
+            this.schema()
+          } >
             {this.form}
           </Formik>
 
