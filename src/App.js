@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Formik, Field, ErrorMessage} from 'formik';
+import {Formik, Field, ErrorMessage, FieldArray} from 'formik';
 import * as Yup from 'yup';
 
 class App extends Component{
@@ -21,7 +21,7 @@ class App extends Component{
     <ErrorMessage name ="email"/><br/>
 
     <label>Select : </label>
-    <Field name = "type" component="select"><br/>
+    <Field name = "type" component="select">
         <option value = "1"> One</option>  
         <option value = "2"> Two</option>  
     </Field><br/>
@@ -46,6 +46,21 @@ class App extends Component{
     <Field name = "social.twitter"/><br/>
     <ErrorMessage name ="social.twitter"/><br/>
 
+    <FieldArray name = "friends"
+      render = {arrayHelper => (
+      <div>{
+        props.values.friends.map((_, index) => (
+          <div key = {index}> <Field name = {`friends.${index}`}/> 
+          <button type = "button" onClick = {()=> arrayHelper.remove({index})}> Delete</button>
+          <ErrorMessage name ={`friends.${index}`}/><br/>
+          </div>
+
+        ))}
+         <button type = "button" onClick = {()=> arrayHelper.push("some thing")}> Add</button>
+      </div>)
+        }/>
+
+
 
       <button type = "submit"> Send</button>
     </form>
@@ -60,7 +75,10 @@ class App extends Component{
       social : Yup.object().shape({
         facebook :  Yup.string().required("Facebook is a required field"),
         twitter :  Yup.string().required("Twitter is a required field"),
-      })
+      }),
+      friends: Yup.array().of(
+        Yup.string().required('required field')
+      )
 
     });
     return schema;
@@ -84,7 +102,8 @@ class App extends Component{
             social:{
               facebook:'',
               twitter:'',
-          }
+          },
+          friends: ['Rabee','Hussam']
         }}
           onSubmit = {this.onSubmit}
           validationSchema = {this.schema()} >
